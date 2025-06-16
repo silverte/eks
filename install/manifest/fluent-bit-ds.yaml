@@ -19,10 +19,6 @@ spec:
         prometheus.io/port: "2020"
         prometheus.io/path: "/api/v1/metrics/prometheus"
     spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        fsGroup: 1000
       serviceAccountName: fluent-bit
       terminationGracePeriodSeconds: 30
       priorityClassName: system-node-critical
@@ -34,8 +30,8 @@ spec:
                   - key: karpenter.sh/nodepool
                     operator: In
                     values:
-                      - np-esp-prd-arm64
-                      - np-esp-prd-amd64
+                      - np-esp-stg-arm64
+                      - np-esp-stg-amd64
       containers:
         - name: aws-for-fluent-bit
           image: public.ecr.aws/aws-observability/aws-for-fluent-bit:2.32.5.20250327
@@ -50,7 +46,7 @@ spec:
             - name: AWS_REGION
               value: ap-northeast-2
             - name: S3_BUCKET_NAME
-              value: s3-esp-prd-app-logs
+              value: s3-esp-stg-app-logs
             - name: HOSTNAME
               valueFrom:
                 fieldRef:
@@ -71,24 +67,24 @@ spec:
                   fieldPath: spec.nodeName
           resources:
             limits:
-              memory: 2Gi
+              memory: 512Mi
             requests:
-              cpu: 500m
-              memory: 2Gi
+              cpu: 200m
+              memory: 512Mi
           livenessProbe:
             httpGet:
               path: /
               port: 2020
-            initialDelaySeconds: 10
-            periodSeconds: 30
+            initialDelaySeconds: 5
+            periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /api/v1/health
               port: 2020
-            initialDelaySeconds: 10
-            periodSeconds: 30
+            initialDelaySeconds: 5
+            periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           volumeMounts:
