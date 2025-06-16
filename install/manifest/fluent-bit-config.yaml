@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-for-fluent-bit-config
+  namespace: logging
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Flush                     5
+        Log_Level                 info
+        Daemon                    off
+        Parsers_File              parsers.conf
+        HTTP_Server               On
+        HTTP_Listen               0.0.0.0
+        HTTP_Port                 2020
+        storage.path              /var/fluent-bit/state/flb-storage/
+        storage.sync              normal
+        storage.checksum          off
+        storage.backlog.mem_limit 50M
+        Health_Check              On
+        HC_Errors_Count           5
+        HC_Retry_Failure_Count    5
+        HC_Period                 30
+    [INPUT]
+        Name                tail
+        Tag                 kube.*
+        Path                /var/log/containers/*.log
+        Exclude_Path        /var/log/containers/*kube-system*.log,/var/log/containers/*kyverno*.log,/var/log/containers/*whatap-monitoring*.log,/var/log/containers/*gateway*.log,/var/log/containers/*esp-apim-dev*.log,/var/log/containers/*logging*.log
+        Parser              containerd
+        DB                  /var/fluent-bit/state/flb-storage/containers.db
+        Mem_Buf_Limit       10MB
+        Skip_Long_Lines     On
+        Refresh_Interval    10
+        Rotate_Wait         30
+        storage.type        filesystem
+        Read_from_Head      ${READ_FROM_HEAD}
+    [FILTER]
+        Name                kubernetes
+        Match               kube.*
+        Kube_URL            https://kubernetes.default.svc:443
+        Kube_CA_File        /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        Kube_Token_File     /var/run/secrets/kubernetes.io/serviceaccount/token
+        Merge_Log           On
+        K8S-Logging.Parser  On
+        K8S-Logging.Exclude Off
+        Keep_Log            On
+        Labels              On
+        Annotations         Off
+    [FILTER]
+        Name                grep
+        Match               kube.*
+        Exclude             log ELB-HealthChecker
+    [FILTER]
+        Name                parser
+        Match               kube.*
+        Key_Name            log
+        Parser              spring
+        Reserve_Data        True
+    [FILTER]
+        Name                rewrite_tag
+        Match               kube.*
+        Rule                $kubernetes['namespace_name'] ^(.*)$ app.$kubernetes['namespace_name'].$kubernetes['labels']['amdp.io/app'] false
+        #Emitter_Name        emitter_for_rewrite_tag
+        #Emitter_Storage.type filesystem
+        #Emitter_Mem_Buf_Limit 10M
+    [FILTER]
+        Name                record_modifier
+        Match               app.*
+        Remove_key          kubernetes
+        Remove_key          timestamp
+        Remove_key          time
+        Remove_key          stream
+        Remove_key          logtag
+    [OUTPUT]
+        Name                s3
+        Match               app.*
+        region              ${AWS_REGION}
+        bucket              ${S3_BUCKET_NAME}
+        total_file_size     50M
+        upload_timeout      10m
+        s3_key_format       /$TAG[1]/$TAG[2]/%Y/%m/%d/%H/%H-%M-%S-$INDEX.json.gz
+        compression         gzip
+        content_type        application/json
+        store_dir           /var/fluent-bit/state/flb-storage/s3
+        store_dir_limit_size 5G
+        retry_limit         5
+        json_date_key       timestamp
+        json_date_format    iso8601
+        s3_key_format_tag_delimiters .
+  parsers.conf: |
+    [PARSER]
+        Name                containerd
+        Format              regex
+        Regex               ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<log>.*)$
+        Time_Key            time
+        Time_Format         %Y-%m-%dT%H:%M:%S.%L%z
+        Time_Keep           On
+    [PARSER]
+        Name                spring
+        Format              regex
+        Regex               ^(?<time>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z)\s+(?<level>[A-Z]+)\s+(?<pid>\d+)\s+---\s+\$\{sys:LOGGED_APPLICATION_NAME\}\[(?<thread>[^\]]+)\]\s+(?<logger>[^\s]+)\s*:\s+(?<message>.*)$
+        Time_Key            time
+        Time_Format         %Y-%m-%dT%H:%M:%S.%L%z
+        Time_Keep           On

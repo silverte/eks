@@ -1,0 +1,136 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #2c3e50; }
+      .step-title { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #34495e; }
+      .step-desc { font-family: Arial, sans-serif; font-size: 12px; fill: #2c3e50; }
+      .warning { font-family: Arial, sans-serif; font-size: 11px; fill: #e74c3c; }
+      .success { font-family: Arial, sans-serif; font-size: 11px; fill: #27ae60; }
+      .step-box { fill: #ecf0f1; stroke: #34495e; stroke-width: 2; rx: 8; }
+      .step1-box { fill: #e8f4fd; stroke: #3498db; stroke-width: 2; rx: 8; }
+      .step2-box { fill: #fff3cd; stroke: #f39c12; stroke-width: 2; rx: 8; }
+      .step3-box { fill: #d4edda; stroke: #27ae60; stroke-width: 2; rx: 8; }
+      .option-box { fill: #f8d7da; stroke: #dc3545; stroke-width: 2; rx: 8; }
+      .arrow { stroke: #34495e; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .decision-diamond { fill: #fff3cd; stroke: #f39c12; stroke-width: 2; }
+      .process-flow { stroke: #3498db; stroke-width: 3; fill: none; stroke-dasharray: 5,5; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" class="title">EKS 업그레이드 프로세스 (Node Groups + Karpenter)</text>
+
+  <!-- Step 1: Control Plane Upgrade -->
+  <rect x="50" y="70" width="280" height="160" class="step1-box"/>
+  <text x="190" y="95" text-anchor="middle" class="step-title">Step 1: Control Plane</text>
+  <text x="60" y="115" class="step-desc">1. Karpenter AMI 버전 고정</text>
+  <text x="60" y="135" class="step-desc">2. Karpenter drift 비활성화</text>
+  <text x="60" y="155" class="step-desc">3. EKS 컨트롤 플레인 업그레이드</text>
+  <text x="60" y="175" class="step-desc">4. .upgrade-state 파일 생성</text>
+  <text x="60" y="200" class="warning">⚠️ 노드 교체 방지를 위한 사전 준비</text>
+  <text x="60" y="215" class="success">✓ 멱등성 보장 (재실행 안전)</text>
+
+  <!-- Step 2: Add-ons Upgrade -->
+  <rect x="50" y="270" width="280" height="160" class="step2-box"/>
+  <text x="190" y="295" text-anchor="middle" class="step-title">Step 2: Add-ons</text>
+  <text x="60" y="315" class="step-desc">1. kube-proxy 업그레이드</text>
+  <text x="60" y="335" class="step-desc">2. coredns 업그레이드</text>
+  <text x="60" y="355" class="step-desc">3. vpc-cni 업그레이드</text>
+  <text x="60" y="375" class="step-desc">4. eks-pod-identity-agent</text>
+  <text x="60" y="395" class="step-desc">5. EFS/S3 CSI drivers</text>
+  <text x="60" y="415" class="warning">⚠️ 순서대로 업그레이드 (의존성 고려)</text>
+
+  <!-- Step 3: Node Upgrade -->
+  <rect x="50" y="470" width="280" height="160" class="step3-box"/>
+  <text x="190" y="495" text-anchor="middle" class="step-title">Step 3: Node Groups</text>
+  <text x="60" y="515" class="step-desc">1. 노드 그룹 업그레이드 (eksctl)</text>
+  <text x="60" y="535" class="step-desc">2. Karpenter drift 활성화</text>
+  <text x="60" y="555" class="step-desc">3. 노드 교체 모니터링</text>
+  <text x="60" y="575" class="step-desc">4. 최종 상태 확인 및 정리</text>
+  <text x="60" y="600" class="warning">⚠️ 파드 중단 발생 가능</text>
+  <text x="60" y="615" class="success">✓ 업그레이드 완료</text>
+
+  <!-- Optional Components -->
+  <rect x="400" y="270" width="280" height="160" class="option-box"/>
+  <text x="540" y="295" text-anchor="middle" class="step-title">Optional: Components</text>
+  <text x="410" y="315" class="step-desc">1. AWS Load Balancer Controller</text>
+  <text x="410" y="335" class="step-desc">2. Karpenter (신규 설치)</text>
+  <text x="410" y="355" class="step-desc">3. Kyverno Policy Engine</text>
+  <text x="410" y="380" class="step-desc">• IAM 정책 생성/업데이트</text>
+  <text x="410" y="400" class="step-desc">• CRD 설치/업데이트</text>
+  <text x="410" y="420" class="warning">💡 신규 클러스터 또는 컴포넌트 추가시</text>
+
+  <!-- Process Flow Arrows -->
+  <line x1="190" y1="230" x2="190" y2="270" class="arrow"/>
+  <line x1="190" y1="430" x2="190" y2="470" class="arrow"/>
+  
+  <!-- Optional component connection -->
+  <line x1="330" y1="350" x2="400" y2="350" class="arrow" stroke-dasharray="5,5"/>
+
+  <!-- Architecture Overview -->
+  <rect x="750" y="70" width="400" height="560" class="step-box"/>
+  <text x="950" y="100" text-anchor="middle" class="step-title">아키텍처 구성 요소</text>
+
+  <!-- EKS Control Plane -->
+  <rect x="770" y="120" width="150" height="60" fill="#3498db" stroke="#2980b9" stroke-width="2" rx="5"/>
+  <text x="845" y="140" text-anchor="middle" fill="white" class="step-desc">EKS Control Plane</text>
+  <text x="845" y="155" text-anchor="middle" fill="white" class="step-desc">v1.33</text>
+
+  <!-- Node Groups -->
+  <rect x="770" y="200" width="70" height="50" fill="#e67e22" stroke="#d35400" stroke-width="2" rx="5"/>
+  <text x="805" y="220" text-anchor="middle" fill="white" class="step-desc">Node</text>
+  <text x="805" y="235" text-anchor="middle" fill="white" class="step-desc">Groups</text>
+
+  <!-- Karpenter -->
+  <rect x="850" y="200" width="70" height="50" fill="#27ae60" stroke="#229954" stroke-width="2" rx="5"/>
+  <text x="885" y="220" text-anchor="middle" fill="white" class="step-desc">Karpenter</text>
+  <text x="885" y="235" text-anchor="middle" fill="white" class="step-desc">Nodes</text>
+
+  <!-- Add-ons -->
+  <rect x="940" y="200" width="100" height="50" fill="#8e44ad" stroke="#7d3c98" stroke-width="2" rx="5"/>
+  <text x="990" y="215" text-anchor="middle" fill="white" class="step-desc">EKS Add-ons</text>
+  <text x="990" y="230" text-anchor="middle" fill="white" class="step-desc">(CNI, DNS, etc)</text>
+  <text x="990" y="245" text-anchor="middle" fill="white" class="step-desc"></text>
+
+  <!-- Workloads -->
+  <ellipse cx="845" cy="300" rx="60" ry="30" fill="#95a5a6" stroke="#7f8c8d" stroke-width="2"/>
+  <text x="845" y="305" text-anchor="middle" fill="white" class="step-desc">Application</text>
+  <text x="845" y="320" text-anchor="middle" fill="white" class="step-desc">Workloads</text>
+
+  <!-- Key Features -->
+  <text x="770" y="360" class="step-title">주요 특징:</text>
+  <text x="770" y="380" class="step-desc">• 무중단 컨트롤 플레인 업그레이드</text>
+  <text x="770" y="400" class="step-desc">• 단계별 안전한 진행</text>
+  <text x="770" y="420" class="step-desc">• Karpenter drift 제어</text>
+  <text x="770" y="440" class="step-desc">• 애드온 호환성 보장</text>
+  <text x="770" y="460" class="step-desc">• 백업 및 복구 지원</text>
+
+  <text x="770" y="490" class="step-title">사전 요구사항:</text>
+  <text x="770" y="510" class="step-desc">• kubectl, eksctl, aws-cli 설치</text>
+  <text x="770" y="530" class="step-desc">• 적절한 IAM 권한</text>
+  <text x="770" y="550" class="step-desc">• 클러스터 접근 권한</text>
+  <text x="770" y="570" class="step-desc">• Helm (옵션 컴포넌트용)</text>
+
+  <!-- Connection lines -->
+  <line x1="845" y1="180" x2="805" y2="200" stroke="#34495e" stroke-width="2"/>
+  <line x1="845" y1="180" x2="885" y2="200" stroke="#34495e" stroke-width="2"/>
+  <line x1="845" y1="180" x2="990" y2="200" stroke="#34495e" stroke-width="2"/>
+  <line x1="845" y1="250" x2="845" y2="270" stroke="#34495e" stroke-width="2"/>
+
+  <!-- Timeline indicator -->
+  <text x="50" y="665" class="step-title">실행 순서:</text>
+  <text x="50" y="685" class="step-desc">1단계 → 상태 확인 → 2단계 → 상태 확인 → 3단계 → 완료</text>
+  <text x="50" y="705" class="warning">⚠️ 각 단계 완료 후 다음 단계 진행 권장</text>
+  <text x="50" y="725" class="success">✓ .upgrade-state 파일로 진행 상황 추적</text>
+
+  <!-- Version compatibility note -->
+  <rect x="750" y="650" width="400" height="80" fill="#fff3cd" stroke="#f39c12" stroke-width="2" rx="5"/>
+  <text x="950" y="675" text-anchor="middle" class="step-title">버전 호환성</text>
+  <text x="760" y="695" class="step-desc">• EKS 버전: 현재 → 1.33</text>
+  <text x="760" y="710" class="step-desc">• 애드온: 자동으로 호환 버전 선택</text>
+  <text x="760" y="725" class="step-desc">• AMI: 대상 Kubernetes 버전에 맞는 최신 버전</text>
+
+</svg>
