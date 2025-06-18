@@ -97,7 +97,7 @@ spec:
   metadataOptions:
     httpEndpoint: enabled
     httpProtocolIPv6: disabled
-    httpPutResponseHopLimit: 1 # This is changed to disable IMDS access from containers not on the host network
+    httpPutResponseHopLimit: 2
     httpTokens: required
   # Optional, configures storage devices for the instance
   blockDeviceMappings:

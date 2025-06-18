@@ -30,8 +30,8 @@ spec:
                   - key: karpenter.sh/nodepool
                     operator: In
                     values:
-                      - np-esp-stg-arm64
-                      - np-esp-stg-amd64
+                      - np-esp-prd-arm64
+                      - np-esp-prd-amd64
       containers:
         - name: aws-for-fluent-bit
           image: public.ecr.aws/aws-observability/aws-for-fluent-bit:2.32.5.20250327
@@ -43,10 +43,12 @@ spec:
               drop:
                 - ALL
           env:
+            - name: TZ
+              value: Asia/Seoul
             - name: AWS_REGION
               value: ap-northeast-2
             - name: S3_BUCKET_NAME
-              value: s3-esp-stg-app-logs
+              value: s3-esp-prd-app-logs
             - name: HOSTNAME
               valueFrom:
                 fieldRef:
@@ -67,24 +69,24 @@ spec:
                   fieldPath: spec.nodeName
           resources:
             limits:
-              memory: 512Mi
+              memory: 2Gi
             requests:
-              cpu: 200m
-              memory: 512Mi
+              cpu: 500m
+              memory: 2Gi
           livenessProbe:
             httpGet:
               path: /
               port: 2020
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
             httpGet:
               path: /api/v1/health
               port: 2020
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           volumeMounts:
@@ -111,3 +113,9 @@ spec:
         - name: fluentbit-state
           hostPath:
             path: /var/fluent-bit/state
+        -  name : fluent-bit-scripts
+           configMap:
+             name: aws-for-fluent-bit-config
+             items:
+               - key: timestamp_kst.lua
+                 path: timestamp_kst.lua
