@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+        effect: "NoSchedule"
+      #affinity:
+      #  nodeAffinity:
+      #    requiredDuringSchedulingIgnoredDuringExecution:
+      #      nodeSelectorTerms:
+      #        - matchExpressions:
+      #            - key: 'arch-type'
+      #              operator: In
+      #              values:
+      #                - 'amd64'
+      containers:
+        - name: nginx-container
+          image: public.ecr.aws/nginx/nginx:stable-perl
+          resources:
+            limits:
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+              subPath: Asia/Seoul
+            - name: nginx-main-config
+              mountPath: /etc/nginx/conf.d
+            - name: shared-static
+              mountPath: /usr/share/nginx/html/shared
+        - name: nginx-app
+          image: public.ecr.aws/nginx/nginx:stable-perl
+          ports:
+          - containerPort: 8080
+          volumeMounts:
+            - name: nginx-app-config
+              mountPath: /etc/nginx/conf.d
+            - name: app-content
+              mountPath: /usr/share/nginx/html
+            - name: shared-static
+              mountPath: /usr/share/nginx/html/shared
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 128Mi
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo
+        - name: nginx-main-config
+          configMap:
+            name: nginx-main-config
+        - name: nginx-app-config
+          configMap:
+            name: nginx-app-config
+        - name: app-content
+          configMap:
+            name: app-content
+        - name: shared-static
+          emptyDir: {}
+
+
+
+

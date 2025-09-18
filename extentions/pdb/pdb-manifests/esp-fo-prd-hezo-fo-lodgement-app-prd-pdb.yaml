@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-hezo-fo-lodgement-app-prd
+  namespace: esp-fo-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      amdp.io/app: hezo-fo-lodgement
+      amdp.io/profile: esp-fo.prd

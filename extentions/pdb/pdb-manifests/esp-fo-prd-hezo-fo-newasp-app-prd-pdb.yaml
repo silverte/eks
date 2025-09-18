@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-hezo-fo-newasp-app-prd
+  namespace: esp-fo-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      amdp.io/app: hezo-fo-newasp
+      amdp.io/profile: esp-fo.prd

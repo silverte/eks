@@ -1,0 +1,60 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/group.name: ing-esp-prd-container  # 같은 ALB 사용
+    alb.ingress.kubernetes.io/group.order: '10'  # 기존 Ingress보다 높은 우선순위
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'  # HTTP만
+
+    # 조건부 리다이렉트 액션
+    alb.ingress.kubernetes.io/actions.redirect-https: |
+      {
+        "type": "redirect",
+        "redirectConfig": {
+          "protocol": "HTTPS",
+          "port": "443",
+          "statusCode": "HTTP_301"
+        }
+      }
+    # 조건 정의
+    alb.ingress.kubernetes.io/conditions.redirect-https: |
+      [
+        {
+          "field": "source-ip",
+          "sourceIpConfig": {
+            "values": [
+              "10.64.0.0/15",
+              "10.163.10.0/24",
+              "10.164.10.0/24",
+              "192.168.160.0/20"
+            ]
+          }
+        }
+      ]
+  name: ing-conditional-redirect
+  namespace: kube-system
+spec:
+  ingressClassName: alb
+  rules:
+    - http:  # 모든 호스트에 적용
+        paths:
+          - backend:
+              service:
+                name: redirect-https
+                port:
+                  name: use-annotation
+            path: /
+            pathType: Prefix
+---
+# 더미 서비스
+apiVersion: v1
+kind: Service
+metadata:
+  name: redirect-https
+  namespace: kube-system
+spec:
+  type: ExternalName
+  externalName: dummy.local
+  ports:
+  - name: use-annotation
+    port: 80

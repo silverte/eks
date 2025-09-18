@@ -1,0 +1,183 @@
+sh eks-upgrade-step1.sh 1.33
+[INFO] === Step 1: EKS Control Plane Upgrade ===
+[INFO] 클러스터: eks-esp-dev
+[INFO] 환경: dev
+[INFO] 현재 버전: 1.32
+[INFO] 대상 버전: 1.33
+
+
+[WARNING] Step 1에서 수행할 작업:
+[WARNING] 1. Karpenter AMI 버전 고정
+[WARNING] 2. Karpenter drift 비활성화 (노드 교체 방지)
+[WARNING] 3. EKS 컨트롤 플레인 업그레이드
+
+계속하시겠습니까? (y/N): y
+
+[INFO] === AMI 버전 고정 ===
+[INFO] 처리 중: EC2NodeClass nc-esp-dev-default
+[INFO]   업데이트: al2023@latest → al2023@v20250610
+ec2nodeclass.karpenter.k8s.aws/nc-esp-dev-default patched
+[SUCCESS]   AMI 버전 업데이트 완료
+[SUCCESS] AMI 버전 고정 완료
+
+[INFO] === Karpenter Drift 비활성화 ===
+node/ip-10-3-132-1.ap-northeast-2.compute.internal annotated
+node/ip-10-3-132-14.ap-northeast-2.compute.internal annotated
+node/ip-10-3-134-104.ap-northeast-2.compute.internal annotated
+node/ip-10-3-138-57.ap-northeast-2.compute.internal annotated
+node/ip-10-3-140-119.ap-northeast-2.compute.internal annotated
+node/ip-10-3-157-152.ap-northeast-2.compute.internal annotated
+[SUCCESS] Karpenter drift 비활성화 완료 (노드 교체 방지)
+
+[INFO] === 컨트롤 플레인 업그레이드 ===
+[INFO] 컨트롤 플레인 업그레이드 시작: 1.32 → 1.33
+2025-06-19 11:32:01 [ℹ]  will upgrade cluster "eks-esp-dev" control plane from current version "1.32" to "1.33"
+2025-06-19 11:39:53 [✔]  cluster "eks-esp-dev" control plane has been upgraded to version "1.33"
+2025-06-19 11:39:53 [ℹ]  you will need to follow the upgrade procedure for all of nodegroups and add-ons
+[INFO] 컨트롤 플레인 활성화 대기 중...
+[SUCCESS] 컨트롤 플레인 업그레이드 완료: 1.33
+
+[INFO] 업그레이드 상태 저장: .upgrade-state
+[SUCCESS] === Step 1 완료 ===
+[SUCCESS] 컨트롤 플레인이 Kubernetes 1.33으로 업그레이드되었습니다
+
+[INFO] 다음 단계:
+[INFO] 1. 클러스터 상태 확인
+[INFO] 2. Step 2 실행: ./eks-upgrade-step2.sh
+[INFO] 3. 애드온 업그레이드 완료 후 Step 3 실행
+[eks-admin@dlbst01 script]$ sh eks-upgrade-step2.sh
+[INFO] === Step 2: EKS Add-ons Upgrade ===
+[INFO] 클러스터: eks-esp-dev
+[INFO] Kubernetes 버전: 1.33
+
+
+[WARNING] Step 2에서 수행할 작업:
+[WARNING] - 모든 EKS 애드온을 Kubernetes 1.33 호환 버전으로 업그레이드
+
+계속하시겠습니까? (y/N): y
+
+[INFO] 애드온 업그레이드 시작...
+[INFO] kube-proxy 업데이트: v1.32.3-eksbuild.7 → v1.33.0-eksbuild.2
+2025-06-19 11:45:08 [ℹ]  Kubernetes version "1.33" in use by cluster "eks-esp-dev"
+2025-06-19 11:45:08 [ℹ]  new version provided v1.33.0-eksbuild.2
+2025-06-19 11:45:08 [ℹ]  updating addon
+2025-06-19 11:46:02 [ℹ]  addon "kube-proxy" active
+[SUCCESS] kube-proxy 업그레이드 완료
+[INFO] coredns 업데이트: v1.11.4-eksbuild.14 → v1.12.1-eksbuild.2
+2025-06-19 11:46:07 [ℹ]  Kubernetes version "1.33" in use by cluster "eks-esp-dev"
+2025-06-19 11:46:08 [ℹ]  new version provided v1.12.1-eksbuild.2
+2025-06-19 11:46:08 [ℹ]  updating addon
+[SUCCESS] coredns 업그레이드 완료
+[INFO] vpc-cni 업데이트: v1.19.5-eksbuild.3 → v1.19.6-eksbuild.1
+2025-06-19 11:46:45 [ℹ]  Kubernetes version "1.33" in use by cluster "eks-esp-dev"
+2025-06-19 11:46:45 [ℹ]  new version provided v1.19.6-eksbuild.1
+2025-06-19 11:46:45 [ℹ]  updating addon
+2025-06-19 11:48:27 [ℹ]  addon "vpc-cni" active
+[SUCCESS] vpc-cni 업그레이드 완료
+[SUCCESS] eks-pod-identity-agent 이미 최신 버전: v1.3.7-eksbuild.2
+[INFO] aws-efs-csi-driver 업데이트: v2.1.7-eksbuild.1 → v2.1.8-eksbuild.1
+2025-06-19 11:48:34 [ℹ]  Kubernetes version "1.33" in use by cluster "eks-esp-dev"
+2025-06-19 11:48:34 [ℹ]  new version provided v2.1.8-eksbuild.1
+2025-06-19 11:48:34 [ℹ]  updating addon
+[SUCCESS] aws-efs-csi-driver 업그레이드 완료
+[INFO] aws-mountpoint-s3-csi-driver 애드온이 설치되지 않음, 건너뛰기
+
+[INFO] === 애드온 상태 확인 ===
+2025-06-19 11:49:10 [ℹ]  Kubernetes version "1.33" in use by cluster "eks-esp-dev"
+2025-06-19 11:49:10 [ℹ]  getting all addons
+2025-06-19 11:49:11 [ℹ]  to see issues for an addon run `eksctl get addon --name <addon-name> --cluster <cluster-name>`
+NAME			VERSION			STATUS	ISSUES	IAMROLE								UPDATE AVAILABLE	CONFIGURATION VALUES		POD IDENTITY ASSOCIATION ROLES
+aws-efs-csi-driver	v2.1.8-eksbuild.1	ACTIVE	0	arn:aws:iam::026090541979:role/role-esp-dev-efs-csi-driver
+coredns			v1.12.1-eksbuild.2	ACTIVE	0
+eks-pod-identity-agent	v1.3.7-eksbuild.2	ACTIVE	0
+kube-proxy		v1.33.0-eksbuild.2	ACTIVE	0
+metrics-server		v0.7.2-eksbuild.3	ACTIVE	0
+vpc-cni			v1.19.6-eksbuild.1	ACTIVE	0												{"enableNetworkPolicy":"true","env":{"ENABLE_PREFIX_DELEGATION":"true","WARM_PREFIX_TARGET":"1"}}
+
+[SUCCESS] 모든 애드온 업그레이드 완료
+
+[SUCCESS] === Step 2 완료 ===
+[INFO] 다음 단계: ./eks-upgrade-step3.sh
+[eks-admin@dlbst01 script]$ sh eks-upgrade-step3.sh
+[INFO] === Step 3: Node Groups & Karpenter Node Upgrade ===
+[INFO] 클러스터: eks-esp-dev
+[INFO] Kubernetes 버전: 1.33
+
+
+[WARNING] Step 3에서 수행할 작업:
+[WARNING] 1. 노드 그룹 업그레이드 (있는 경우)
+[WARNING] 2. Karpenter drift 활성화 및 노드 교체
+[WARNING] ⚠️  이 작업은 파드 중단을 발생시킵니다.
+
+계속하시겠습니까? (y/N): ㅛ
+[INFO] Step 3이 취소되었습니다.
+[eks-admin@dlbst01 script]$ sh eks-upgrade-step3.sh
+[INFO] === Step 3: Node Groups & Karpenter Node Upgrade ===
+[INFO] 클러스터: eks-esp-dev
+[INFO] Kubernetes 버전: 1.33
+
+
+[WARNING] Step 3에서 수행할 작업:
+[WARNING] 1. 노드 그룹 업그레이드 (있는 경우)
+[WARNING] 2. Karpenter drift 활성화 및 노드 교체
+[WARNING] ⚠️  이 작업은 파드 중단을 발생시킵니다.
+
+계속하시겠습니까? (y/N): y
+
+[INFO] === 노드 그룹 업그레이드 ===
+[INFO] 발견된 노드 그룹: eksng-esp-dev-mgmt
+[INFO] 노드 그룹 업그레이드: eksng-esp-dev-mgmt (1.32 → 1.33)
+2025-06-19 11:57:12 [ℹ]  upgrade of nodegroup "eksng-esp-dev-mgmt" in progress
+2025-06-19 11:57:12 [ℹ]  waiting for upgrade of nodegroup "eksng-esp-dev-mgmt" to complete
+2025-06-19 12:05:46 [ℹ]  nodegroup successfully upgraded
+[SUCCESS] 노드 그룹 eksng-esp-dev-mgmt 업그레이드 완료
+[SUCCESS] 노드 그룹 업그레이드 완료
+
+[INFO] === Karpenter 노드 교체 ===
+[INFO] Karpenter drift 활성화
+node/ip-10-3-132-1.ap-northeast-2.compute.internal annotated
+node/ip-10-3-132-14.ap-northeast-2.compute.internal annotated
+node/ip-10-3-134-104.ap-northeast-2.compute.internal annotated
+node/ip-10-3-138-57.ap-northeast-2.compute.internal annotated
+node/ip-10-3-140-119.ap-northeast-2.compute.internal annotated
+node/ip-10-3-157-152.ap-northeast-2.compute.internal annotated
+[INFO] NodePool np-esp-dev-amd64 설정 복원 중...
+ec2nodeclass.karpenter.k8s.aws/nc-esp-dev-default annotated
+[INFO] NodePool np-esp-dev-arm64 설정 복원 중...
+ec2nodeclass.karpenter.k8s.aws/nc-esp-dev-default annotated
+[INFO] 노드 교체 진행 상황 모니터링 (최대 15분)
+[INFO]   대기 중... 남은 구버전 노드: 6
+[INFO]   대기 중... 남은 구버전 노드: 6
+[INFO]   대기 중... 남은 구버전 노드: 5
+[INFO]   대기 중... 남은 구버전 노드: 4
+[INFO]   대기 중... 남은 구버전 노드: 3
+[INFO]   대기 중... 남은 구버전 노드: 2
+[INFO]   대기 중... 남은 구버전 노드: 1
+[SUCCESS] 모든 Karpenter 노드가 1.33으로 업데이트됨
+[SUCCESS] Karpenter 노드 교체 완료
+
+[INFO] === 최종 업그레이드 상태 확인 ===
+[INFO] 클러스터 버전: 1.33
+[INFO] 노드 버전 분포:
+[INFO]   v1.33.0-eks-802817d: 7개 노드
+
+[INFO] 애드온 최종 상태:
+2025-06-19 12:09:31 [ℹ]  Kubernetes version "1.33" in use by cluster "eks-esp-dev"
+2025-06-19 12:09:31 [ℹ]  getting all addons
+2025-06-19 12:09:33 [ℹ]  to see issues for an addon run `eksctl get addon --name <addon-name> --cluster <cluster-name>`
+NAME			VERSION			STATUS	ISSUES	IAMROLE								UPDATE AVAILABLE	CONFIGURATION VALUES		POD IDENTITY ASSOCIATION ROLES
+aws-efs-csi-driver	v2.1.8-eksbuild.1	ACTIVE	0	arn:aws:iam::026090541979:role/role-esp-dev-efs-csi-driver
+coredns			v1.12.1-eksbuild.2	ACTIVE	0
+eks-pod-identity-agent	v1.3.7-eksbuild.2	ACTIVE	0
+kube-proxy		v1.33.0-eksbuild.2	ACTIVE	0
+metrics-server		v0.7.2-eksbuild.3	ACTIVE	0
+vpc-cni			v1.19.6-eksbuild.1	ACTIVE	0												{"enableNetworkPolicy":"true","env":{"ENABLE_PREFIX_DELEGATION":"true","WARM_PREFIX_TARGET":"1"}}
+
+[INFO] === 정리 작업 ===
+[INFO] Karpenter 백업 파일 정리
+[INFO] 업그레이드 상태 파일 정리
+[SUCCESS] 정리 작업 완료
+
+[SUCCESS] === EKS 클러스터 업그레이드 완료 ===
+[SUCCESS] 클러스터 eks-esp-dev이 Kubernetes 1.33으로 업그레이드되었습니다
+[INFO] 총 소요 시간: 12분 24초

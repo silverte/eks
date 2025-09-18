@@ -1,0 +1,79 @@
+<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 24px; font-weight: bold; fill: #2c3e50; }
+      .step-title { font-family: Arial, sans-serif; font-size: 16px; font-weight: bold; fill: #34495e; }
+      .step-desc { font-family: Arial, sans-serif; font-size: 12px; fill: #2c3e50; }
+      .warning { font-family: Arial, sans-serif; font-size: 11px; fill: #e74c3c; }
+      .success { font-family: Arial, sans-serif; font-size: 11px; fill: #27ae60; }
+      .step-box { fill: #ecf0f1; stroke: #34495e; stroke-width: 2; rx: 8; }
+      .step1-box { fill: #e8f4fd; stroke: #3498db; stroke-width: 2; rx: 8; }
+      .step2-box { fill: #fff3cd; stroke: #f39c12; stroke-width: 2; rx: 8; }
+      .step3-box { fill: #d4edda; stroke: #27ae60; stroke-width: 2; rx: 8; }
+      .option-box { fill: #f8d7da; stroke: #dc3545; stroke-width: 2; rx: 8; }
+      .arrow { stroke: #34495e; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .decision-diamond { fill: #fff3cd; stroke: #f39c12; stroke-width: 2; }
+      .process-flow { stroke: #3498db; stroke-width: 3; fill: none; stroke-dasharray: 5,5; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" class="title">EKS 업그레이드 프로세스 (Node Groups + Karpenter)</text>
+
+  <!-- Step 1: Control Plane Upgrade -->
+  <rect x="180" y="70" width="280" height="160" class="step1-box"/>
+  <text x="320" y="95" text-anchor="middle" class="step-title">Step 1: Control Plane</text>
+  <text x="190" y="115" class="step-desc">1. Karpenter AMI 버전 고정</text>
+  <text x="190" y="135" class="step-desc">2. Karpenter drift 비활성화</text>
+  <text x="190" y="155" class="step-desc">3. EKS 컨트롤 플레인 업그레이드</text>
+  <text x="190" y="175" class="step-desc">4. .upgrade-state 파일 생성</text>
+  <text x="190" y="200" class="warning">⚠️ 노드 교체 방지를 위한 사전 준비</text>
+  <text x="190" y="215" class="success">✓ 멱등성 보장 (재실행 안전)</text>
+
+  <!-- Step 2: Add-ons Upgrade -->
+  <rect x="180" y="270" width="280" height="160" class="step2-box"/>
+  <text x="320" y="295" text-anchor="middle" class="step-title">Step 2: Add-ons</text>
+  <text x="190" y="315" class="step-desc">1. kube-proxy 업그레이드</text>
+  <text x="190" y="335" class="step-desc">2. coredns 업그레이드</text>
+  <text x="190" y="355" class="step-desc">3. vpc-cni 업그레이드</text>
+  <text x="190" y="375" class="step-desc">4. eks-pod-identity-agent</text>
+  <text x="190" y="395" class="step-desc">5. EFS/S3 CSI drivers</text>
+  <text x="190" y="415" class="warning">⚠️ 순서대로 업그레이드 (의존성 고려)</text>
+
+  <!-- Step 3: Node Upgrade -->
+  <rect x="180" y="470" width="280" height="160" class="step3-box"/>
+  <text x="320" y="495" text-anchor="middle" class="step-title">Step 3: Node Groups</text>
+  <text x="190" y="515" class="step-desc">1. 노드 그룹 업그레이드 (eksctl)</text>
+  <text x="190" y="535" class="step-desc">2. Karpenter drift 활성화</text>
+  <text x="190" y="555" class="step-desc">3. 노드 교체 모니터링</text>
+  <text x="190" y="575" class="step-desc">4. 최종 상태 확인 및 정리</text>
+  <text x="190" y="600" class="warning">⚠️ 파드 중단 발생 가능</text>
+  <text x="190" y="615" class="success">✓ 업그레이드 완료</text>
+
+  <!-- Optional Components -->
+  <rect x="530" y="270" width="280" height="160" class="option-box"/>
+  <text x="670" y="295" text-anchor="middle" class="step-title">Optional: Components</text>
+  <text x="540" y="315" class="step-desc">1. AWS Load Balancer Controller</text>
+  <text x="540" y="335" class="step-desc">2. Karpenter</text>
+  <text x="540" y="355" class="step-desc">3. Kyverno Policy Engine</text>
+  <text x="540" y="380" class="step-desc">• IAM 정책 생성/업데이트</text>
+  <text x="540" y="400" class="step-desc">• CRD 설치/업데이트</text>
+  <text x="540" y="420" class="warning">💡 기존 컴포넌트 업그레이드 시</text>
+
+  <!-- Process Flow Arrows -->
+  <line x1="320" y1="230" x2="320" y2="270" class="arrow"/>
+  <line x1="320" y1="430" x2="320" y2="470" class="arrow"/>
+  
+  <!-- Optional component connection -->
+  <line x1="460" y1="350" x2="530" y2="350" class="arrow" stroke-dasharray="5,5"/>
+
+  <!-- Timeline indicator -->
+  <text x="180" y="665" class="step-title">실행 순서:</text>
+  <text x="180" y="685" class="step-desc">1단계 → 상태 확인 → 2단계 → 상태 확인 → 3단계 → 완료</text>
+  <text x="180" y="705" class="warning">⚠️ 각 단계 완료 후 다음 단계 진행 권장</text>
+  <text x="180" y="725" class="success">✓ .upgrade-state 파일로 진행 상황 추적</text>
+
+</svg>

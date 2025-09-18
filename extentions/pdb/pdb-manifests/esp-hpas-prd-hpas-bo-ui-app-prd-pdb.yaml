@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-hpas-bo-ui-app-prd
+  namespace: esp-hpas-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      amdp.io/app: hpas-bo-ui
+      amdp.io/profile: esp-hpas.prd

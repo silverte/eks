@@ -1,0 +1,312 @@
+<svg viewBox="0 0 1200 850" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Orange gradient for Step 1 -->
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#fed7aa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fdba74;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Blue gradient for Step 2 -->
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#dbeafe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#93c5fd;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Green gradient for Step 3 -->
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#dcfce7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#86efac;stop-opacity:1" />
+    </linearGradient>
+    
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000020"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="850" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="600" y="40" text-anchor="middle" font-family="Malgun Gothic, sans-serif" font-size="26" font-weight="bold" fill="#1f2937">
+    EKS 클러스터 업그레이드 프로세스 (3단계)
+  </text>
+
+  <!-- Step 1: Control Plane & AMI Pinning -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="80" width="1100" height="200" rx="12" fill="url(#orangeGrad)" stroke="#f97316" stroke-width="3"/>
+    
+    <!-- Step number -->
+    <circle cx="100" cy="120" r="20" fill="#ffffff"/>
+    <text x="100" y="128" text-anchor="middle" font-family="Malgun Gothic, sans-serif" font-size="16" font-weight="bold" fill="#f97316">1</text>
+    
+    <text x="130" y="120" font-family="Malgun Gothic, sans-serif" font-size="20" font-weight="bold" fill="#ea580c">
+      컨트롤 플레인 &amp; AMI 고정
+    </text>
+    <text x="130" y="140" font-family="Monaco, monospace" font-size="14" fill="#9a3412">
+      ./eks-upgrade-step1.sh 1.33
+    </text>
+    
+    <!-- AMI Pinning -->
+    <rect x="80" y="160" width="250" height="90" rx="8" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="90" y="180" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#ea580c">
+      🎯 AMI 버전 고정
+    </text>
+    <text x="90" y="200" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • EC2NodeClass 백업 생성
+    </text>
+    <text x="90" y="216" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • al2023@latest → al2023@v20241201
+    </text>
+    <text x="90" y="232" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • ARM64/x86_64 자동 감지
+    </text>
+    
+    <!-- Arrow 1 -->
+    <path d="M 340 205 L 370 205" stroke="#ea580c" stroke-width="3" fill="none" marker-end="url(#arrow1)"/>
+    
+    <!-- Drift Prevention -->
+    <rect x="380" y="160" width="250" height="90" rx="8" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="390" y="180" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#ea580c">
+      🛡️ Karpenter Drift 비활성화
+    </text>
+    <text x="390" y="200" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • NodePool 설정 백업
+    </text>
+    <text x="390" y="216" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • do-not-disrupt 어노테이션 추가
+    </text>
+    <text x="390" y="232" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • 노드 교체 방지
+    </text>
+    
+    <!-- Arrow 2 -->
+    <path d="M 640 205 L 670 205" stroke="#ea580c" stroke-width="3" fill="none" marker-end="url(#arrow1)"/>
+    
+    <!-- Control Plane Upgrade -->
+    <rect x="680" y="160" width="220" height="90" rx="8" fill="#ffffff" stroke="#f97316" stroke-width="2"/>
+    <text x="690" y="180" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#ea580c">
+      ⚙️ 컨트롤 플레인 업그레이드
+    </text>
+    <text x="690" y="200" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • eksctl upgrade cluster
+    </text>
+    <text x="690" y="216" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • 멱등성 보장 (재실행 안전)
+    </text>
+    <text x="690" y="232" font-family="Malgun Gothic, sans-serif" font-size="13" fill="#7c2d12">
+      • 상태 저장 (.upgrade-state)
+    </text>
+    
+    <!-- Arrow 3 -->
+    <path d="M 910 205 L 940 205" stroke="#ea580c" stroke-width="3" fill="none" marker-end="url(#arrow1)"/>
+    
+    <!-- State Save -->
+    <rect x="950" y="160" width="170" height="90" rx="8" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+    <text x="960" y="180" font-family="Malgun Gothic, sans-serif" font-size="13" font-weight="bold" fill="#92400e">
+      💾 상태 저장
+    </text>
+    <text x="960" y="200" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#92400e">
+      • 클러스터 정보
+    </text>
+    <text x="960" y="216" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#92400e">
+      • 대상 버전
+    </text>
+    <text x="960" y="232" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#92400e">
+      • 완료 플래그
+    </text>
+  </g>
+
+  <!-- Big Arrow Down -->
+  <path d="M 600 300 L 600 330" stroke="#4b5563" stroke-width="6" fill="none" marker-end="url(#bigArrow)"/>
+  <text x="620" y="320" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#6b7280">Step 1 완료 검증</text>
+
+  <!-- Step 2: Add-ons Upgrade -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="350" width="1100" height="180" rx="12" fill="url(#blueGrad)" stroke="#3b82f6" stroke-width="3"/>
+    
+    <!-- Step number -->
+    <circle cx="100" cy="390" r="20" fill="#ffffff"/>
+    <text x="100" y="398" text-anchor="middle" font-family="Malgun Gothic, sans-serif" font-size="16" font-weight="bold" fill="#3b82f6">2</text>
+    
+    <text x="130" y="390" font-family="Malgun Gothic, sans-serif" font-size="20" font-weight="bold" fill="#1d4ed8">
+      애드온 업그레이드 (순서 중요)
+    </text>
+    <text x="130" y="410" font-family="Monaco, monospace" font-size="14" fill="#1e40af">
+      ./eks-upgrade-step2.sh
+    </text>
+    
+    <!-- Network Add-ons -->
+    <rect x="80" y="430" width="200" height="80" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="90" y="450" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#1d4ed8">
+      🌐 네트워킹 기본
+    </text>
+    <text x="90" y="470" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      1. kube-proxy
+    </text>
+    <text x="90" y="485" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      2. coredns
+    </text>
+    <text x="90" y="500" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      3. vpc-cni (신중)
+    </text>
+    
+    <!-- Arrow -->
+    <path d="M 290 470 L 320 470" stroke="#3b82f6" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+    
+    <!-- Security Add-ons -->
+    <rect x="330" y="430" width="220" height="80" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="340" y="450" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#1d4ed8">
+      🔐 보안 &amp; 인증
+    </text>
+    <text x="340" y="470" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      4. eks-pod-identity-agent
+    </text>
+    <text x="340" y="485" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      • 호환 버전 자동 감지
+    </text>
+    <text x="340" y="500" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      • ACTIVE 상태 대기 (5분)
+    </text>
+    
+    <!-- Arrow -->
+    <path d="M 560 470 L 590 470" stroke="#3b82f6" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+    
+    <!-- Storage Add-ons -->
+    <rect x="600" y="430" width="260" height="80" rx="8" fill="#ffffff" stroke="#3b82f6" stroke-width="2"/>
+    <text x="610" y="450" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#1d4ed8">
+      💾 스토리지 드라이버
+    </text>
+    <text x="610" y="470" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      5. aws-efs-csi-driver (IAM 역할)
+    </text>
+    <text x="610" y="485" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      6. aws-mountpoint-s3-csi-driver
+    </text>
+    <text x="610" y="500" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#1e40af">
+      • 실패 애드온 추적 &amp; 보고
+    </text>
+    
+    <!-- Arrow -->
+    <path d="M 870 470 L 900 470" stroke="#3b82f6" stroke-width="3" fill="none" marker-end="url(#arrow2)"/>
+    
+    <!-- Verification -->
+    <rect x="910" y="430" width="200" height="80" rx="8" fill="#e0f2fe" stroke="#0891b2" stroke-width="2"/>
+    <text x="920" y="450" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#0c4a6e">
+      ✅ 검증 &amp; 상태 저장
+    </text>
+    <text x="920" y="470" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#0c4a6e">
+      • eksctl get addon
+    </text>
+    <text x="920" y="485" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#0c4a6e">
+      • 실패 애드온 리포트
+    </text>
+    <text x="920" y="500" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#0c4a6e">
+      • ADDONS_UPGRADED=true
+    </text>
+  </g>
+
+  <!-- Big Arrow Down -->
+  <path d="M 600 550 L 600 580" stroke="#4b5563" stroke-width="6" fill="none" marker-end="url(#bigArrow)"/>
+  <text x="620" y="570" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#6b7280">애드온 상태 확인</text>
+
+  <!-- Step 3: Node Upgrades -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="600" width="1100" height="200" rx="12" fill="url(#greenGrad)" stroke="#10b981" stroke-width="3"/>
+    
+    <!-- Step number -->
+    <circle cx="100" cy="640" r="20" fill="#ffffff"/>
+    <text x="100" y="648" text-anchor="middle" font-family="Malgun Gothic, sans-serif" font-size="16" font-weight="bold" fill="#10b981">3</text>
+    
+    <text x="130" y="640" font-family="Malgun Gothic, sans-serif" font-size="20" font-weight="bold" fill="#059669">
+      노드 업그레이드 &amp; 정리
+    </text>
+    <text x="130" y="660" font-family="Monaco, monospace" font-size="14" fill="#047857">
+      ./eks-upgrade-step3.sh
+    </text>
+    
+    <!-- Node Groups -->
+    <rect x="80" y="680" width="200" height="90" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+    <text x="90" y="700" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#059669">
+      🖥️ 노드 그룹
+    </text>
+    <text x="90" y="720" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • eksctl upgrade nodegroup
+    </text>
+    <text x="90" y="735" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • 롤링 업데이트
+    </text>
+    <text x="90" y="750" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • PodDisruptionBudget 고려
+    </text>
+    
+    <!-- Arrow -->
+    <path d="M 290 725 L 320 725" stroke="#10b981" stroke-width="3" fill="none" marker-end="url(#arrow3)"/>
+    
+    <!-- Karpenter Restoration -->
+    <rect x="330" y="680" width="220" height="90" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+    <text x="340" y="700" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#059669">
+      🚀 Karpenter 복원
+    </text>
+    <text x="340" y="720" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • do-not-disrupt 제거
+    </text>
+    <text x="340" y="735" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • NodePool 설정 복원
+    </text>
+    <text x="340" y="750" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • drift-timestamp 트리거
+    </text>
+    
+    <!-- Arrow -->
+    <path d="M 560 725 L 590 725" stroke="#10b981" stroke-width="3" fill="none" marker-end="url(#arrow3)"/>
+    
+    <!-- Node Rotation -->
+    <rect x="600" y="680" width="220" height="90" rx="8" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+    <text x="610" y="700" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#059669">
+      🔄 노드 교체 모니터링
+    </text>
+    <text x="610" y="720" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • 15분간 진행상황 추적
+    </text>
+    <text x="610" y="735" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • 구버전 노드 개수 확인
+    </text>
+    <text x="610" y="750" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#047857">
+      • jq로 버전 필터링
+    </text>
+    
+    <!-- Arrow -->
+    <path d="M 830 725 L 860 725" stroke="#10b981" stroke-width="3" fill="none" marker-end="url(#arrow3)"/>
+    
+    <!-- Cleanup -->
+    <rect x="870" y="680" width="250" height="90" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="880" y="700" font-family="Malgun Gothic, sans-serif" font-size="14" font-weight="bold" fill="#15803d">
+      🧹 정리 &amp; 완료
+    </text>
+    <text x="880" y="720" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#15803d">
+      • 백업 파일 삭제
+    </text>
+    <text x="880" y="735" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#15803d">
+      • .upgrade-state 정리
+    </text>
+    <text x="880" y="750" font-family="Malgun Gothic, sans-serif" font-size="12" fill="#15803d">
+      • 최종 상태 확인 &amp; 보고
+    </text>
+  </g>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow1" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow2" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow3" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0 0, 10 4, 0 8" fill="#10b981"/>
+    </marker>
+    <marker id="bigArrow" markerWidth="14" markerHeight="12" refX="12" refY="6" orient="auto">
+      <polygon points="0 0, 14 6, 0 12" fill="#4b5563"/>
+    </marker>
+  </defs>
+</svg>

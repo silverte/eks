@@ -1,0 +1,48 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:026090542079:certificate/325b95af-a7c3-4c84-a8dc-4f5cd14ee5c8,arn:aws:acm:ap-northeast-2:026090542079:certificate/e619c3a0-e8f6-4207-9d91-bb3ad99a807b
+    alb.ingress.kubernetes.io/group.name: ing-esp-prd-container
+    alb.ingress.kubernetes.io/healthcheck-healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-success-codes: '200'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthcheck-unhealthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}, {"HTTP": 80}]'
+    alb.ingress.kubernetes.io/load-balancer-name: alb-esp-prd-container
+    alb.ingress.kubernetes.io/manage-backend-security-group-rules: 'false'
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/security-groups: sg-014efeab5968ebfda
+    # alb.ingress.kubernetes.io/tags: Name=alb-esp-prd-container
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.order: '50'
+  name: ing-esp-prd-nginx
+  namespace: default
+spec:
+  ingressClassName: alb
+  rules:
+    - host: prd.ezwelesp.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: nginx-svc
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: prd.ezwel.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: nginx-svc
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+

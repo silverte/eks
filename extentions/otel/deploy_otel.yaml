@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "11"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"otel-collector","namespace":"logging"},"spec":{"replicas":2,"selector":{"matchLabels":{"app":"otel-collector"}},"template":{"metadata":{"labels":{"app":"otel-collector"}},"spec":{"affinity":{"nodeAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":{"nodeSelectorTerms":[{"matchExpressions":[{"key":"arch-type","operator":"In","values":["amd64"]}]}]}}},"containers":[{"args":["--config","/etc/otel/config.yaml"],"image":"026090541481.dkr.ecr.ap-northeast-2.amazonaws.com/logging/opentelemetry-collector-contrib:0.106.0","name":"otel-collector","ports":[{"containerPort":4317},{"containerPort":4318}],"resources":{"limits":{"cpu":"0.5","memory":"500Mi"},"requests":{"cpu":"0.5","memory":"500Mi"}},"volumeMounts":[{"mountPath":"/etc/otel/config.yaml","name":"config-volume","subPath":"otel-collector-config.yaml"}]},{"env":[{"name":"WHATAP_ACCESSKEY","value":"x2a0g7imv9pmr-z707njp7sgqvh8-z36svl03mks1p0"},{"name":"WHATAP_SERVER_HOST","value":"10.3.214.149"},{"name":"otel_metric_server_enabled","value":"true"},{"name":"otel_log_server_enabled","value":"true"},{"name":"debug_otel_grpc_server_enabled","value":"true"},{"name":"NODE_IP","valueFrom":{"fieldRef":{"fieldPath":"status.hostIP"}}},{"name":"NODE_NAME","valueFrom":{"fieldRef":{"fieldPath":"spec.nodeName"}}},{"name":"POD_NAME","valueFrom":{"fieldRef":{"fieldPath":"metadata.name"}}}],"image":"026090541481.dkr.ecr.ap-northeast-2.amazonaws.com/logging/opentelemetry-agent:1.4","name":"whatap-otel-agent","ports":[{"containerPort":6600}],"resources":{"limits":{"cpu":"0.5","memory":"500Mi"},"requests":{"cpu":"0.5","memory":"500Mi"}}}],"volumes":[{"configMap":{"name":"otel-collector-config"},"name":"config-volume"}]}}}}
+  creationTimestamp: "2025-04-10T08:09:30Z"
+  generation: 11
+  name: otel-collector
+  namespace: logging
+  resourceVersion: "139548688"
+  uid: 1f662e60-5eb1-4acd-bc1e-de248c7ef042
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: otel-collector
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: otel-collector
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: arch-type
+                operator: In
+                values:
+                - amd64
+      containers:
+      - args:
+        - --config
+        - /etc/otel/config.yaml
+        image: 026090541481.dkr.ecr.ap-northeast-2.amazonaws.com/logging/opentelemetry-collector-contrib:0.106.0
+        imagePullPolicy: IfNotPresent
+        name: otel-collector
+        ports:
+        - containerPort: 4317
+          protocol: TCP
+        - containerPort: 4318
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+          requests:
+            cpu: 500m
+            memory: 1000Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/otel/config.yaml
+          name: config-volume
+          subPath: otel-collector-config.yaml
+      - args:
+        - --config
+        - /etc/otel/config.yaml
+        env:
+        - name: LOG_LEVEL
+          value: DEBUG
+        - name: push_enabled
+          value: "true"
+        - name: WHATAP_ACCESSKEY
+          value: x218gbc6sq1ln-xld97t9hp69cv-z7hdcmqi8gtbi0
+        - name: WHATAP_SERVER_HOST
+          value: 10.3.214.151
+        - name: otel_metric_server_enabled
+          value: "true"
+        - name: otel_log_server_enabled
+          value: "true"
+        - name: debug_otel_grpc_server_enabled
+          value: "true"
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        image: 026090541481.dkr.ecr.ap-northeast-2.amazonaws.com/logging/opentelemetry-agent:1.4
+        imagePullPolicy: IfNotPresent
+        name: whatap-otel-agent
+        ports:
+        - containerPort: 6600
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/whatap/otel/whatap.conf
+          name: otel-agent-config
+          subPath: whatap.conf
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: otel-collector-config
+        name: config-volume
+      - configMap:
+          defaultMode: 420
+          name: whatap-config
+        name: otel-agent-config
+status:
+  availableReplicas: 1
+  conditions:
+  - lastTransitionTime: "2025-04-10T08:09:30Z"
+    lastUpdateTime: "2025-05-28T07:04:41Z"
+    message: ReplicaSet "otel-collector-7d5b798668" has successfully progressed.
+    reason: NewReplicaSetAvailable
+

@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-hcas-bo-ui-app-prd
+  namespace: esp-hcas-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      amdp.io/app: hcas-bo-ui
+      amdp.io/profile: esp-hcas.prd

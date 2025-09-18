@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ab-tester
+spec:
+  containers:
+  - name: ab-tester
+    image: public.ecr.aws/ubuntu/ubuntu:20.04
+    command: ["/bin/bash"]
+    args:
+    - -c
+    - |
+      apt-get update > /dev/null 2>&1
+      apt-get install -y apache2-utils > /dev/null 2>&1
+      echo "Apache Bench ready at: \$(which ab)"
+      while true; do sleep 300; done
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  restartPolicy: Never

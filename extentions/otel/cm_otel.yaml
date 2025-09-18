@@ -1,0 +1,62 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    otel-collector-config.yaml: |
+      receivers:
+        otlp:
+          protocols:
+            grpc:
+              endpoint: 0.0.0.0:4317
+            http:
+              endpoint: 0.0.0.0:4318
+      exporters:
+        otlp:
+          endpoint: "127.0.0.1:6600"
+          tls:
+            insecure: true
+        logging:
+          loglevel: debug
+      processors:
+        batch:
+      service:
+        pipelines:
+          traces:
+            receivers: [otlp]
+            processors: [batch]
+            exporters: [otlp, logging]
+          metrics:
+            receivers: [otlp]
+            processors: [batch]
+            exporters: [otlp, logging]
+          logs:
+            receivers: [otlp]
+            processors: [batch]
+            exporters: [otlp, logging]
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","data":{"otel-collector-config.yaml":"receivers:\n  otlp:\n    protocols:\n      grpc:\n        endpoint: 0.0.0.0:4317\n      http:\n        endpoint: 0.0.0.0:4318\nexporters:\n  otlp:\n    endpoint: \"127.0.0.1:6600\"\n    tls:\n      insecure: true\n  logging:\n    loglevel: debug\nprocessors:\n  batch:\nservice:\n  pipelines:\n    traces:\n      receivers: [otlp]\n      processors: [batch]\n      exporters: [otlp, logging]\n    metrics:\n      receivers: [otlp]\n      processors: [batch]\n      exporters: [otlp, logging]\n    logs:\n      receivers: [otlp]\n      processors: [batch]\n      exporters: [otlp, logging]\n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"otel-collector-config","namespace":"logging"}}
+    creationTimestamp: "2025-04-10T08:07:46Z"
+    name: otel-collector-config
+    namespace: logging
+    resourceVersion: "71996424"
+    uid: eb96d0f8-eb16-45e3-8730-9a3b88a20682
+- apiVersion: v1
+  data:
+    whatap.conf: "otel_attr_tx_url_keys=http.url__\n#otel_tx_path_setby_name_enabled=true\notel_mtrace_stepid_setby_trace_spanid_enabled=true
+      \ndebug_otel_grpc_server_enabled=true\notel_log_metric_server_enabled=true\notel_log_server_enabled=true\notel_attr_tx_clientip_keys=http.client_ip\nlog_stdout_enabled=true"
+  kind: ConfigMap
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"v1","data":{"whatap.conf":"otel_tx_path_setby_name_enabled=true\notel_mtrace_stepid_setby_trace_spanid_enabled=true \n"},"kind":"ConfigMap","metadata":{"annotations":{},"name":"whatap-config","namespace":"logging"}}
+    creationTimestamp: "2025-04-16T05:00:42Z"
+    name: whatap-config
+    namespace: logging
+    resourceVersion: "96726387"
+    uid: 713e75b3-bf04-4ecb-99ff-fdefaebeabea
+kind: List
+metadata:
+  resourceVersion: ""

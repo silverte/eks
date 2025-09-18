@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-hims-bo-common-api-app-prd
+  namespace: esp-hims-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      amdp.io/app: hims-bo-common-api
+      amdp.io/profile: esp-hims.prd

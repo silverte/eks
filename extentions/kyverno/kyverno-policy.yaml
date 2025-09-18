@@ -1,0 +1,78 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-resource-limits
+  annotations:
+    policies.kyverno.io/title: Enforce Resource Requests and Memory Limits
+    policies.kyverno.io/category: Resource Management
+    policies.kyverno.io.severity: high
+    policies.kyverno.io.minversion: 1.14.1
+spec:
+  validationFailureAction: Enforce  # Enforcing the policy to ensure compliance
+  #validationFailureAction: Audit  # Initially set to Audit mode for monitoring before enforcing
+  background: true
+  rules:
+  - name: require-memory-limits-and-cpu-memory-requests
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          operations:
+          - CREATE
+          - UPDATE
+    exclude:
+      any:
+      - resources:
+          namespaces:
+          - kube-system
+          - kyverno
+    validate:
+      cel:
+        variables:
+        - name: allContainers
+          expression: "object.spec.containers"
+        expressions:
+        - expression: "variables.allContainers.all(container, 'requests' in container.resources && 'cpu' in container.resources.requests && 'memory' in container.resources.requests && 'limits' in container.resources && 'memory' in container.resources.limits)"
+          message: "All containers must have CPU and memory requests set, and memory limits defined."
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-image-registries
+  annotations:
+    policies.kyverno.io/title: Restrict Image Registries
+    policies.kyverno.io/category: Security Best Practices
+    policies.kyverno.io.severity: medium
+    policies.kyverno.io.minversion: 1.14.1
+spec:
+  validationFailureAction: Enforce  # Enforcing the policy to ensure compliance
+  #validationFailureAction: Audit  # Initially set to Audit mode for monitoring before enforcing
+  background: true
+  rules:
+  - name: validate-registries
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+          operations:
+          - CREATE
+          - UPDATE
+    exclude:
+      any:
+      - resources:
+          namespaces:
+          - kube-system
+          - kyverno
+          - velero
+    validate:
+      cel:
+        variables:
+        - name: allowedRegistries
+          expression: "['026090541898.dkr.ecr.ap-northeast-2.amazonaws.com/','026090541481.dkr.ecr.ap-northeast-2.amazonaws.com/', 'public.ecr.aws/']"
+        - name: allContainers
+          expression: "object.spec.containers + object.spec.?initContainers.orValue([]) + object.spec.?ephemeralContainers.orValue([])"
+        expressions:
+        - expression: "variables.allContainers.all(container, variables.allowedRegistries.exists(registry, container.image.startsWith(registry)))"
+          message: "Unauthorized image registry detected. Only images from '026090542079.dkr.ecr.ap-northeast-2.amazonaws.com/' or 'public.ecr.aws/' are allowed."          

@@ -1,0 +1,256 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apache-extra-conf
+  namespace: esp-fo-prd
+data:
+  httpd-vhosts-ontongdaejeon.conf: |
+    <VirtualHost *:80>
+      ServerAdmin sysop@ezwel.com
+      DocumentRoot "/data/webroot/ezwel-welfare-user/webapp"
+      DirectoryIndex  cuser.html
+      ServerName ontongdaejeon.ezwel.com
+
+      ProxyPass    "/ezcheckin/"       "http://ontongdaejeon-dev.ezwel.com/ezcheckin/" 
+      ProxyPassReverse    "/ezcheckin/"       "http://ontongdaejeon-dev.ezwel.com/ezcheckin/"
+
+      #ezcheckin-m2 8484
+      #ontongdaejeon-dev.ezwel.com/ezcheckin-m
+      ProxyPass    "/ezcheckin-m/"       "http://ontongdaejeon-dev.ezwel.com/ezcheckin-m/" 
+      ProxyPassReverse    "/ezcheckin-m/"       "http://ontongdaejeon-dev.ezwel.com/ezcheckin-m/"
+
+      #ezwel-market-b2e-pc
+      #market-sijang-dev.ezwel.com
+      ProxyPass    "/error/"       "http://market-sijang-dev.ezwel.com/" 
+      ProxyPassReverse    "/error/"       "http://market-sijang-dev.ezwel.com/"
+
+      #ezwel-market-b2e-pc
+      #market-sijang-dev.ezwel.com
+      ProxyPass    "/onnuri/"       "http://market-sijang-dev.ezwel.com/" 
+      ProxyPassReverse    "/onnuri/"       "http://market-sijang-dev.ezwel.com/"
+
+      #ezwel-market-b2e-mobile
+      #market-sijang-dev.ezwel.com/mw
+      ProxyPass    "/mw/error/"       "http://market-sijang-dev.ezwel.com/mw/" 
+      ProxyPassReverse    "/mw/error/"       "http://market-sijang-dev.ezwel.com/mw/"
+
+      #ezwel-market-b2e-mobile
+      #market-sijang-dev.ezwel.com/mw
+      ProxyPass    "/mw/onnuri/"       "http://market-sijang-dev.ezwel.com/mw/" 
+      ProxyPassReverse    "/mw/onnuri/"       "http://market-sijang-dev.ezwel.com/mw/"
+
+      ## Rewrite to notice page at work, attack(DDos, DeFace)
+      <IfDefine NoticeAll>
+          include conf/extra/config-rewrite-notice-condition.conf
+      </IfDefine>
+      <IfDefine NoticeOntong>
+          include conf/extra/config-rewrite-notice-condition.conf
+      </IfDefine>
+      <IfDefine EmergAll>
+          include conf/extra/config-rewrite-emergency-condition.conf
+      </IfDefine>
+      <IfDefine EmergOntong>
+          include conf/extra/config-rewrite-emergency-condition.conf
+      </IfDefine>
+      <IfDefine NoticeDdos>
+          include conf/extra/config-rewrite-ddos-condition.conf
+      </IfDefine>
+      <IfDefine NoticeDeface>
+          include conf/extra/config-rewrite-deface-condition.conf
+      </IfDefine>
+
+      <IfModule mod_rewrite.c>
+          RewriteEngine on
+          RewriteCond %{REQUEST_URI} ^/robots.txt
+          RewriteCond %{HTTPS} off
+          RewriteRule "^/robots\.txt$" "/test/robots.txt" [R=301,L]
+      </IfModule>
+
+      <Directory "/data/webroot/ezwel-welfare-user/webapp">
+          Options None
+          AllowOverride None
+          Order allow,deny
+          Allow from all
+      </Directory>
+
+      ErrorLog /dev/stderr
+      LogLevel warn
+
+      LogFormat "%h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" combined
+      CustomLog /dev/stdout combined
+
+    </VirtualHost>
+
+  httpd-vhosts-redirect.conf: |
+    <VirtualHost *:80>
+      ServerName polbokji.com
+      ServerAlias www.polbokji.com xn--pn3b07u31h.com www.xn--pn3b07u31h.com xn--289ap12aztjjnc4rae1r14f.com www.xn--289ap12aztjjnc4rae1r14f.com xn--289ap12aztjjnc4rae2tn4e.com www.xn--289ap12aztjjnc4rae2tn4e.com xn--pn3b07ukof4nd.com www.xn--pn3b07ukof4nd.com xn--pn3b07u5xfc1c.com www.xn--pn3b07u5xfc1c.com
+
+      RewriteCond %{HTTP_HOST} ^polbokji.com$ [OR]
+      RewriteCond %{HTTP_HOST} ^www.polbokji.com$ [OR]
+      # 폴복지.com 도메인
+      RewriteCond %{HTTP_HOST} ^xn--pn3b07u31h.com$ [OR]
+      RewriteCond %{HTTP_HOST} ^www.xn--pn3b07u31h.com$ [OR]
+      # 경찰청복지포탈.com 도메인
+      RewriteCond %{HTTP_HOST} ^xn--289ap12aztjjnc4rae1r14f.com$ [OR]
+      RewriteCond %{HTTP_HOST} ^www.xn--289ap12aztjjnc4rae1r14f.com$ [OR]
+      # 경찰청복지포털.com 도메인
+      RewriteCond %{HTTP_HOST} ^xn--289ap12aztjjnc4rae2tn4e.com$ [OR]
+      RewriteCond %{HTTP_HOST} ^www.xn--289ap12aztjjnc4rae2tn4e.com$ [OR]
+      # 복지포탈.com 도메인
+      RewriteCond %{HTTP_HOST} ^xn--pn3b07ukof4nd.com$ [OR]
+      RewriteCond %{HTTP_HOST} ^www.xn--pn3b07ukof4nd.com$ [OR]
+      # 복지포털.com 도메인
+      RewriteCond %{HTTP_HOST} ^xn--pn3b07u5xfc1c.com$ [OR]
+      RewriteCond %{HTTP_HOST} ^www.xn--pn3b07u5xfc1c.com$ [NC]
+      RewriteRule /(.*) http://polbokji.ezwel.com/$1 [L,R]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName mcircle.ezwel.com
+      RewriteRule ^/(.*)$ http://www.doctorville.co.kr/$1 [R=301,L]
+    </VirtualHost>
+
+
+    <VirtualHost *:80>
+      ServerName motie.ezwel.com
+
+      RewriteRule ^/(.*)$ http://motie.ezwelhealth.com/$1 [R=301,L]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName e1health.ezwel.com
+
+      RewriteRule ^/(.*)$ http://e1health.ezwelhealth.com/$1 [R=301,L]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName kgrowth1.ezwel.com
+
+      RewriteRule ^/(.*)$ http://kgrowth1.ezwelhealth.com/$1 [R=301,L]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName encarmall.ezwel.com
+
+      RewriteRule ^/(.*)$ http://encarmall.ezwelhealth.com/$1 [R=301,L]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerAdmin sysop@ezwel.com
+      ServerName ibene.co.kr
+      ServerAlias www.ibene.co.kr
+
+      Redirect /echo http://echo.ezwel.com
+      Redirect /kfriends http://kfriends.ezwel.com
+      Redirect /kt  http://ktcorp.ezwel.com
+      Redirect /daewon http://ktdaewon.ezwel.com
+      Redirect /ktds http://ktds.ezwel.com
+      Redirect /ktmns http://ktmns.ezwel.com
+      Redirect /nsm http://ktnsm.ezwel.com
+      Redirect /ktn http://ktengcore.ezwel.com
+      Redirect /ktsat http://ktsat.ezwel.com
+      Redirect /ktmmobile http://ktmmobile.ezwel.com
+      Redirect /ktm http://ktgeniemusic.ezwel.com
+      Redirect /b2e http://ktcommerce.ezwel.com
+      Redirect /ktcs http://ktcs.ezwel.com
+      Redirect /nasmedia http://ktnasmedia.ezwel.com
+      Redirect /ktt http://kttelecop.ezwel.com
+      Redirect /ktsm http://ktsubmarine.ezwel.com
+      Redirect /skylife http://ktskylife.ezwel.com
+      Redirect /skytv http://ktskylifetv.ezwel.com
+      Redirect /ktmosgb http://ktmosgb.ezwel.com
+      Redirect /kth http://kthcorp.ezwel.com
+      Redirect /whowho http://ktwhox2.ezwel.com
+      Redirect /ktservice-nb http://ktservice-s.ezwel.com
+      Redirect /ktis http://ktis.ezwel.com
+      Redirect /smartro http://ktsmartro.ezwel.com
+      Redirect /ktpowertel http://ktpowertel.ezwel.com
+      Redirect /ktsports http://ktsprts.ezwel.com
+      Redirect /ktservicebb http://ktservice-n.ezwel.com
+      Redirect /autopion http://ktautopion.ezwel.com
+      Redirect /ktmhows http://ktmhows.ezwel.com
+      Redirect /ktestate http://ktestate.ezwel.com
+      Redirect / http://ibene.ezwel.com
+
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName moef.ezwel.com
+
+      RewriteRule ^/(.*)$ http://moef.ezwelhealth.com/$1 [R=301,L]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName mohw.ezwel.com
+
+      RewriteRule ^/(.*)$ http://mohw.ezwelhealth.com/$1 [R=301,L]
+    </VirtualHost>
+
+    <VirtualHost *:80>
+      ServerName hyundaiezwel.com
+      ServerAlias www.ezwelfare.com www.ezwelfare.net www.ezwel.co.kr www.ezwelfare.co.kr ezwelfare.com ezwelfare.net ezwel.co.kr ezwelfare.co.kr www.ezwel.com ezwel.com www.hyundaiezwel.co.kr www.hyundaiezwel.net 
+
+      RewriteRule ^/(.*)$ https://www.hyundaiezwel.com/$1 [R=301,L]
+    </VirtualHost>
+
+
+  httpd-mpm.conf: |
+    <IfModule !mpm_netware_module>
+      PidFile "logs/httpd.pid"
+    </IfModule>
+
+    <IfModule mpm_prefork_module>
+      StartServers             5
+      MinSpareServers          5
+      MaxSpareServers         10
+      MaxRequestWorkers      250
+      MaxConnectionsPerChild   0
+    </IfModule>
+
+    <IfModule mpm_worker_module>
+      StartServers             3
+      MinSpareThreads         75
+      MaxSpareThreads        250
+      ThreadsPerChild         25
+      MaxRequestWorkers      400
+      MaxConnectionsPerChild   0
+    </IfModule>
+
+    <IfModule mpm_event_module>
+      StartServers             8
+      MinSpareThreads         75
+      MaxSpareThreads        250
+      ThreadsPerChild         25
+      MaxRequestWorkers      400
+      MaxConnectionsPerChild   5000
+    </IfModule>
+
+    <IfModule mpm_netware_module>
+      ThreadStackSize      65536
+      StartThreads           250
+      MinSpareThreads         25
+      MaxSpareThreads        250
+      MaxThreads            1000
+      MaxConnectionsPerChild   0
+    </IfModule>
+
+    <IfModule mpm_mpmt_os2_module>
+      StartServers             2
+      MinSpareThreads          5
+      MaxSpareThreads         10
+      MaxConnectionsPerChild   0
+    </IfModule>
+
+    <IfModule mpm_winnt_module>
+      ThreadsPerChild        150
+      MaxConnectionsPerChild   0
+    </IfModule>
+
+    <IfModule !mpm_netware_module>
+      MaxMemFree            2048
+    </IfModule>
+    <IfModule mpm_netware_module>
+      MaxMemFree             100
+    </IfModule>
+

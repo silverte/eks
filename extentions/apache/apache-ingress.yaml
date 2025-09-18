@@ -1,0 +1,292 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:ap-northeast-2:026090542079:certificate/325b95af-a7c3-4c84-a8dc-4f5cd14ee5c8
+    alb.ingress.kubernetes.io/group.name: ing-esp-prd-container
+    alb.ingress.kubernetes.io/healthcheck-healthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/healthcheck-interval-seconds: '10'
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/healthcheck-port: traffic-port
+    alb.ingress.kubernetes.io/healthcheck-protocol: HTTP
+    alb.ingress.kubernetes.io/healthcheck-success-codes: '200'
+    alb.ingress.kubernetes.io/healthcheck-timeout-seconds: '5'
+    alb.ingress.kubernetes.io/healthcheck-unhealthy-threshold-count: '2'
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}, {"HTTP": 80}]'
+    alb.ingress.kubernetes.io/load-balancer-name: alb-esp-prd-container
+    alb.ingress.kubernetes.io/manage-backend-security-group-rules: 'false'
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/security-groups: sg-014efeab5968ebfda
+    # alb.ingress.kubernetes.io/tags: Name=alb-esp-prd-container
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/group.order: '200'
+  name: ing-esp-prd-apache
+  namespace: esp-fo-prd
+spec:
+  ingressClassName: alb
+  rules:
+    - host: "mcircle.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "motie.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "e1health.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "kgrowth1.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "encarmall.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ibene.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.ibene.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "moef.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "mohw.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "hyundaiezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.ezwelfare.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.ezwelfare.net"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.ezwel.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.ezwelfare.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ezwelfare.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ezwelfare.net"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ezwel.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ezwelfare.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.hyundaiezwel.co.kr"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "www.hyundaiezwel.net"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+    - host: "ontongdaejeon.ezwel.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /ezcheckin/
+            pathType: Prefix
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /ezcheckin-m/
+            pathType: Prefix
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /error/
+            pathType: Prefix
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /onnuri/
+            pathType: Prefix
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /mw/error/
+            pathType: Prefix
+          - backend:
+              service:
+                name: apache-service
+                port:
+                  number: 80
+            path: /mw/onnuri/
+            pathType: Prefix

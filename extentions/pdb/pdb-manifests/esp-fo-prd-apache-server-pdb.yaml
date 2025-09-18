@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-apache-server
+  namespace: esp-fo-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: apache-server

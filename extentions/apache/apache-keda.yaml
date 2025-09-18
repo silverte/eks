@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: apache-server-hpa
+  namespace: esp-fo-prd
+spec:
+  maxReplicaCount: 4
+  minReplicaCount: 3
+  scaleTargetRef:
+    name: apache-server
+  triggers:
+  - metadata:
+      type: Utilization
+      value: "60"
+    type: cpu

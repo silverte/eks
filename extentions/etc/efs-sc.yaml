@@ -1,0 +1,17 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-efs-esp-prd-apim
+parameters:
+  basePath: /apim
+  directoryPerms: '755'
+  ensureUniqueDirectory: 'true'
+  fileSystemId: fs-0d3236ce373d8a79b
+  gid: '1001'
+  provisioningMode: efs-ap
+  subPathPattern: ${.PVC.namespace}/${.PVC.name}
+  uid: '1001'
+provisioner: efs.csi.aws.com
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+

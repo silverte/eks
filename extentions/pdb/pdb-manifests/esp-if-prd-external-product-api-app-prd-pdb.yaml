@@ -1,0 +1,11 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: pdb-external-product-api-app-prd
+  namespace: esp-if-prd
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      amdp.io/app: external-product-api
+      amdp.io/profile: esp-api.prd

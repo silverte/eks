@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    amdp.io/app: esp-vacs
+    amdp.io/profile: esp-solutions.prd
+    argocd.argoproj.io/instance: amdp.service.vacs.prd.esp-solutions
+  name: esp-vacs
+  namespace: vacs
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    service.beta.kubernetes.io/aws-load-balancer-name: "nlb-esp-prd-container-vacs"
+    service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: "true"
+    service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-0faa9e5c3e54b508a"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-041a1b75edb4a6b84,subnet-066cbcd4cffd1cfe2"
+    service.beta.kubernetes.io/aws-load-balancer-private-ipv4-addresses: "10.221.49.140,10.221.49.180"
+spec:
+  ports:
+  - name: web
+    port: 15000
+  selector:
+    amdp.io/app: esp-vacs
+    amdp.io/profile: esp-solutions.prd
+  type: LoadBalancer
