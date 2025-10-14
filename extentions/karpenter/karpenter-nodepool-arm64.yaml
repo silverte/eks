@@ -95,16 +95,16 @@ spec:
 
     # The amount of time Karpenter should wait to consolidate a node after a pod has been added or removed from the node.
     # You can choose to disable consolidation entirely by setting the string value 'Never' here
-    consolidateAfter: 30m # Added to allow additional control over consolidation aggressiveness
+    consolidateAfter: 10m # Added to allow additional control over consolidation aggressiveness
     # Budgets control the speed Karpenter can scale down nodes.
     # Karpenter will respect the minimum of the currently active budgets, and will round up
     # when considering percentages. Duration and Schedule must be set together.
     budgets:
       - nodes: 10%
       # On Weekdays during business hours, don't do any deprovisioning.
-      #- schedule: '0 0 * * mon-sun'
-      #  duration: 12h
-      #  nodes: '0'
+      - schedule: '0 0 * * *'
+        duration: 12h
+        nodes: '0'
 
   # Resource limits constrain the total size of the pool.
   # Limits prevent Karpenter from creating new instances once the limit is exceeded.
